@@ -38,6 +38,27 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Retrieve the secret, decode and import GPG key
+        run: |
+          echo "$GPG_KEY====" | tr -d '\n' | fold -w 4 | sed '$ d' | tr -d '\n' | fold -w 76 | base64 -di | gpg --batch --import || true
+          gpg --list-secret-keys --keyid-format=long
+        env:
+          GPG_KEY: ${{ secrets.GPG_KEY }}
+          GPG_KEY_ID: ${{ secrets.GPG_KEY_ID }}
+
+      - name: Configure Git gpg
+        if: true
+        run: |
+          git config --local user.email "$GIT_COMMITTER_EMAIL"
+          git config --local user.name "$GIT_COMMITTER_NAME"
+          git config --local pull.rebase true
+          git config commit.gpgsign true
+          git config user.signingkey $GPG_KEY_ID
+        env:
+          GIT_COMMITTER_EMAIL: ${{ secrets.GIT_COMMITTER_EMAIL }}
+          GIT_COMMITTER_NAME: ${{ github.repository_owner }}
+          GPG_KEY_ID: ${{ secrets.GPG_KEY_ID }}
+
       - name: Set up PHP with PECL extension
         uses: shivammathur/setup-php@v2
         with:
@@ -81,6 +102,7 @@ jobs:
 
       - name: Version update
         run: |
+          git fetch $(git remote -v | grep "fetch" | cut -f1) 'refs/tags/*:refs/tags/*'
           version=$(git describe --tags --abbrev=0 | tr -d . | awk -F. -v OFS=. '{$NF += 1 ; print}' | sed 's/\(.\)/\1./g; s/\.$//')
           git tag $version
           git push --tags
