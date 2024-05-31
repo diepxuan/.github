@@ -47,7 +47,7 @@ jobs:
           GPG_KEY_ID: ${{ secrets.GPG_KEY_ID }}
 
       - name: Configure Git gpg
-        if: true
+        if: false
         run: |
           git config --local user.email "$GIT_COMMITTER_EMAIL"
           git config --local user.name "$GIT_COMMITTER_NAME"
