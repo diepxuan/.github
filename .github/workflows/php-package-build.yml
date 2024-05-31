@@ -100,6 +100,7 @@ jobs:
               git push || true
           fi
       - name: log Version update
+        if: false
         run: |
           git log -1
           git fetch $(git remote -v | grep "fetch" | cut -f1) 'refs/tags/*:refs/tags/*'
