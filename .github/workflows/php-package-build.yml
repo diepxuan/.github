@@ -99,13 +99,22 @@ jobs:
               git stash apply &&
               git push || true
           fi
+      - name: log Version update
+        run: |
+          git fetch $(git remote -v | grep "fetch" | cut -f1) 'refs/tags/*:refs/tags/*'
+          echo "describe" && git describe --tags --abbrev=0 || true
+          echo "tag" && git tag | xargs -L 1 | tac | head -n 1
+          version=$(git describe --tags --abbrev=0) || $(git tag | xargs -L 1 | tac | head -n 1)
+          echo "version $version"
+          echo "log" && git log $(git describe --tags --abbrev=0 2>/dev/null)..HEAD --oneline
+          newversion=$(echo $version | tr -d . | awk -F. -v OFS=. '{$NF += 1 ; printf "%03d\n", $NF}' | sed 's/\(.\)/\1./g; s/\.$//')
+          echo "newversion $newversion"
 
       - name: Version update
         run: |
           git fetch $(git remote -v | grep "fetch" | cut -f1) 'refs/tags/*:refs/tags/*'
-          if [ "$(git log $(git describe --tags --abbrev=0 2>/dev/null)..HEAD --oneline 2>/dev/null | wc -l)" != "0" ]; then
-            version=$(git describe --tags --abbrev=0) ||
-              $(git tag | xargs -L 1 | tac | head -n 1)
+          version=$(git describe --tags --abbrev=0) || $(git tag | xargs -L 1 | tac | head -n 1)
+          if [ "$(git log $version..HEAD --oneline | wc -l)" != "0" ]; then
             version=$(echo $version | tr -d . | awk -F. -v OFS=. '{$NF += 1 ; printf "%03d\n", $NF}' | sed 's/\(.\)/\1./g; s/\.$//')
             git tag $version || true
             git push --tags
