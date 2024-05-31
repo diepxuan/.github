@@ -103,7 +103,8 @@ jobs:
       - name: Version update
         run: |
           git fetch $(git remote -v | grep "fetch" | cut -f1) 'refs/tags/*:refs/tags/*'
-          version=$(git describe --tags --abbrev=0 | tr -d . | awk -F. -v OFS=. '{$NF += 1 ; print}' | sed 's/\(.\)/\1./g; s/\.$//')
+          # version=$(git describe --tags --abbrev=0 | tr -d . | awk -F. -v OFS=. '{$NF += 1 ; print}' | sed 's/\(.\)/\1./g; s/\.$//')
+          version=$(git tag | xargs -L 1 | tac | head -n 1 | tr -d . | awk -F. -v OFS=. '{$NF += 1 ; printf "%03d\n", $NF}' | sed 's/\(.\)/\1./g; s/\.$//')
           git tag $version || true
           git push --tags
           # git tag | xargs -L 1 
