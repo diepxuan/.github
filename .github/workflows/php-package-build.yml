@@ -108,3 +108,4 @@ jobs:
           git push --tags
           # git tag | xargs -L 1 
           git tag | xargs -L 1 | tac | awk 'NR > 3' | xargs git push $(git remote -v | grep "push" | cut -f1) --delete || true
+          git fetch --prune origin +refs/tags/*:refs/tags/*
