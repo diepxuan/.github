@@ -1,7 +1,7 @@
 
 <p align="center">
   <a href="https://diepxuan.com" target="_blank">
-    <img src="https://raw.githubusercontent.com/diepxuan/logo/main/icons/MetallicBrown.svg" width="200">
+    <img src="https://raw.githubusercontent.com/diepxuan/logo/main/icons/alt/MetallicBrown.svg" width="200">
   </a>
 </p>
 
