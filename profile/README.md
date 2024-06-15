@@ -25,6 +25,7 @@
 ```
 
 > [!NOTE]
-> - [diepxuan.com](https://www.diepxuan.com)
+> - [DiepXuan](https://www.diepxuan.com)
+> - [Everon Quang Binh](https://www.everonqb.com)
 > - [packagist](https://packagist.org/packages/diepxuan/)
 > - [launchpad](https://launchpad.net/~caothu91/+archive/ubuntu/ppa)
