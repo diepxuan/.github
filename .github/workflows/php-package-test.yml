@@ -70,7 +70,8 @@ jobs:
         run: |
           mkdir -p /tmp/test
           cd /tmp/test
-          composer require diepxuan/module-autologin
+          packageName=$(cat composer.json | jq -r '.name')
+          composer require $packageName
 
       - name: Setup Node.js
         if: false
