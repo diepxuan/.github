@@ -68,9 +68,10 @@ jobs:
 
       - name: Install dependencies
         run: |
+          packageName=$(cat composer.json | jq -r '.name')
+          echo "Package: $packageName"
           mkdir -p /tmp/test
           cd /tmp/test
-          packageName=$(cat composer.json | jq -r '.name')
           composer require $packageName
 
       - name: Setup Node.js
