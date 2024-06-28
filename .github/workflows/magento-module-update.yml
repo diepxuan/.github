@@ -30,7 +30,7 @@ jobs:
           echo m2module=$json
           echo "m2module=$(jq -r -c . <<< $json)" >> "$GITHUB_OUTPUT"
       - name: Check
-        run: jq . <<< '${{ steps.setup.outputs.matrix }}'
+        run: jq . <<< '${{ steps.setup.outputs.m2module }}'
   magento-module-build:
     runs-on: ubuntu-latest
     needs: magento-module-load
