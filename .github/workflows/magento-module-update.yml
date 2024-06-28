@@ -1,0 +1,70 @@
+name: Magento Module update
+on:
+  workflow_call:
+    inputs:
+      branch:
+        description: 'Target branch'
+        default: ${{ github.event.release.target_commitish }}
+        type: string
+      version:
+        description: 'Released version'
+        default: ${{ github.event.release.tag_name }}
+        type: string
+      notes:
+        description: 'Release notes'
+        default: ${{ github.event.release.body }}
+        type: string
+jobs:
+  magento-module-load:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Generate matrix data
+        shell: bash
+        run: |
+          pkgs=$(ls -l app/code/Diepxuan | grep '^d' | awk '{print $NF}' | while read dir; do echo app/code/Diepxuan/$dir; done)
+          # pkgs=$(ls -l app/code/Diepxuan | grep '^d' | awk '{print $NF}' | while read dir; do cat app/code/Diepxuan/$dir/composer.json | jq -r '.name'; done)
+          json=$(printf '%s\n' "${pkgs}" | jq -R . | jq -s .)
+          # echo "::set-output name=m2module::$pkgs"
+          echo m2module=$json >> "$GITHUB_OUTPUT"
+  magento-module-build:
+    runs-on: ubuntu-latest
+    needs: magento-module-load
+    defaults:
+      run:
+        shell: bash
+        working-directory: ./${{ matrix.m2module }}
+    strategy:
+      fail-fast: false
+      matrix:
+        m2module: ${{ fromJSON(needs.magento-module-load.outputs.m2module) }}
+    name: Test and Build ${{ matrix.m2module }} module
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Retrieve the secret, decode and import GPG key
+        run: |
+          echo "$GPG_KEY====" | tr -d '\n' | fold -w 4 | sed '$ d' | tr -d '\n' | fold -w 76 | base64 -di | gpg --batch --import || true
+          gpg --list-secret-keys --keyid-format=long
+        env:
+          GPG_KEY: ${{ secrets.GPG_KEY }}
+          GPG_KEY_ID: ${{ secrets.GPG_KEY_ID }}
+
+      - name: Log
+        run: |
+          ls -l
+
+      - name: Push to repository
+        if: false
+        run: |
+          if [ "$(git status --porcelain=v1 2>/dev/null | wc -l)" != "0" ]; then
+            # git add src/debian/control
+            git commit -m "Update packages from ${{ matrix.operating-system }} at $(date +'%d-%m-%y')" &&
+              # git push https://${{ github.repository_owner }}:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git main ||
+              git push ||
+              git stash &&
+              git pull --rebase &&
+              git stash apply &&
+              # git push https://${{ github.repository_owner }}:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git main || true
+              git push || true
+          fi
