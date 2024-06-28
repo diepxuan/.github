@@ -18,6 +18,7 @@ jobs:
   magento-module-load:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v4
       - name: Generate matrix data
         shell: bash
         run: |
