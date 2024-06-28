@@ -25,7 +25,7 @@ jobs:
         id: m2module
         shell: bash
         run: |
-          pkgs=$(ls -l app/code/Diepxuan | grep '^d' | awk '{print $NF}' | while read dir; do echo app/code/Diepxuan/$dir; done)
+          pkgs=$(ls -l app/code/Diepxuan | grep '^d' | awk '{print $NF}' | while read dir; do echo $dir; done)
           # pkgs=$(ls -l app/code/Diepxuan | grep '^d' | awk '{print $NF}' | while read dir; do cat app/code/Diepxuan/$dir/composer.json | jq -r '.name'; done)
           json=$(printf '%s\n' "${pkgs}" | jq -R . | jq -s -c .)
           # echo "::set-output name=m2module::$pkgs"
@@ -33,6 +33,7 @@ jobs:
           echo "m2module=$(jq -r -c . <<< $json)"
           echo "m2module=$json" >> "$GITHUB_OUTPUT"
       - name: Check
+        if: false
         run: jq . <<< '${{ steps.m2module.outputs.m2module }}'
   magento-module-build:
     runs-on: ubuntu-latest
@@ -43,6 +44,7 @@ jobs:
     name: Test and Build ${{ matrix.m2module }} module
     steps:
       - name: Check
+        if: false
         run: echo ${{ matrix.m2module }}
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -57,9 +59,15 @@ jobs:
 
       - name: Log
         shell: bash
-        working-directory: ./${{ matrix.m2module }}
+        working-directory: app/code/Diepxuan/${{ matrix.m2module }}
         run: |
-          ls -l
+          pkgName=$(cat composer.json | jq -r '.name')
+          git init
+          git remote add origin git@github.com:$pkgName.git
+          git fetch -ap
+          git checkout main
+          git add .
+          git status
 
       - name: Push to repository
         if: false
