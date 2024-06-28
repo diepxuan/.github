@@ -48,11 +48,12 @@ jobs:
         run: echo ${{ matrix.m2module }}
       - name: Checkout repository
         uses: actions/checkout@v4
-      - run: |
+      - name: SSH configuration
+        run: |
           mkdir -p ~/.ssh
-          echo "$SSH_ID_RSA" > ~/.ssh/id_rsa
+          # echo "$SSH_ID_RSA" > ~/.ssh/id_rsa
           # openssl pkey < ~/.ssh/id_rsa > ~/.ssh/id_rsa.pkcs8
-          openssl rsa < ~/.ssh/id_rsa > ~/.ssh/id_rsa
+          openssl rsa < $SSH_ID_RSA > ~/.ssh/id_rsa
           # ssh-add ~/.ssh/id_rsa.pkcs8 || mv -f ~/.ssh/id_rsa.pkcs8 ~/.ssh/id_rsa
           chmod 700 ~/.ssh
           chmod 600 ~/.ssh/*
@@ -60,6 +61,7 @@ jobs:
           SSH_ID_RSA: ${{ secrets.SSH_ID_RSA }}
 
       - name: Git configuration
+        # if: false
         run: |
           # echo "$GPG_KEY====" | tr -d '\n' | fold -w 4 | sed '$ d' | tr -d '\n' | fold -w 76 | base64 -di | gpg --batch --import
           # echo "$GPG_KEY====" | tr -d '\n' | fold -w 4 | sed '$ d' | tr -d '\n' | fold -w 76 | base64 -di | gpg --batch --import || true
