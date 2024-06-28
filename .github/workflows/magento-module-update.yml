@@ -39,11 +39,12 @@ jobs:
         shell: bash
         working-directory: ./${{ matrix.m2module }}
     strategy:
-      fail-fast: false
       matrix:
-        m2module: ${{ fromJSON(needs.magento-module-load.outputs.m2module) }}
+        include: ${{ fromJSON(needs.magento-module-load.outputs.m2module) }}
     name: Test and Build ${{ matrix.m2module }} module
     steps:
+      - name: Check
+        run: echo ${{ matrix.m2module }}
       - name: Checkout repository
         uses: actions/checkout@v4
 
