@@ -37,10 +37,6 @@ jobs:
   magento-module-build:
     runs-on: ubuntu-latest
     needs: magento-module-load
-    defaults:
-      run:
-        shell: bash
-        working-directory: ./${{ matrix.m2module }}
     strategy:
       matrix:
         m2module: ${{ fromJSON(needs.magento-module-load.outputs.m2module) }}
@@ -60,6 +56,8 @@ jobs:
           GPG_KEY_ID: ${{ secrets.GPG_KEY_ID }}
 
       - name: Log
+        shell: bash
+        working-directory: ./${{ matrix.m2module }}
         run: |
           ls -l
 
