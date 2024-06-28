@@ -20,14 +20,17 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Generate matrix data
+        id: setup
         shell: bash
         run: |
           pkgs=$(ls -l app/code/Diepxuan | grep '^d' | awk '{print $NF}' | while read dir; do echo app/code/Diepxuan/$dir; done)
           # pkgs=$(ls -l app/code/Diepxuan | grep '^d' | awk '{print $NF}' | while read dir; do cat app/code/Diepxuan/$dir/composer.json | jq -r '.name'; done)
-          json=$(printf '%s\n' "${pkgs}" | jq -R . | jq -s .)
+          json=$(printf '%s\n' "${pkgs}" | jq -R . | jq -s -c .)
           # echo "::set-output name=m2module::$pkgs"
           echo m2module=$json
-          echo m2module=$json >> "$GITHUB_OUTPUT"
+          echo "m2module=$(jq -r -c . <<< $json)" >> "$GITHUB_OUTPUT"
+      - name: Check
+        run: jq . <<< '${{ steps.setup.outputs.matrix }}'
   magento-module-build:
     runs-on: ubuntu-latest
     needs: magento-module-load
