@@ -26,6 +26,7 @@ jobs:
           # pkgs=$(ls -l app/code/Diepxuan | grep '^d' | awk '{print $NF}' | while read dir; do cat app/code/Diepxuan/$dir/composer.json | jq -r '.name'; done)
           json=$(printf '%s\n' "${pkgs}" | jq -R . | jq -s .)
           # echo "::set-output name=m2module::$pkgs"
+          echo m2module=$json
           echo m2module=$json >> "$GITHUB_OUTPUT"
   magento-module-build:
     runs-on: ubuntu-latest
