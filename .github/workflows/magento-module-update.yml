@@ -14,6 +14,10 @@ on:
         description: 'Release notes'
         default: ${{ github.event.release.body }}
         type: string
+      message:
+        description: 'Commit message'
+        default: ${{ github.event.workflow_run.head_commit.message }}
+        type: string
     secrets:
       GPG_KEY:
         required: true
@@ -96,5 +100,19 @@ jobs:
           git fetch -ap
           git checkout main
           ls -la /tmp/${{ matrix.m2module }} | grep -v total | grep -v "\.$" | awk '{print $NF}' | while read path; do cp /tmp/${{ matrix.m2module }}/$path ./ -rf; done
-          git add .
-          git status
+
+      - name: Commit module
+        shell: bash
+        working-directory: app/code/Diepxuan/${{ matrix.m2module }}
+        run: |
+          if [ "$(git status --porcelain=v1 2>/dev/null | wc -l)" != "0" ]; then
+            git add .
+            git commit -m "$GIT_COMMITT_MESSAGE" &&
+              git push ||
+              git stash &&
+              git pull --rebase &&
+              git stash apply &&
+              git push || true
+          fi
+        env:
+          GIT_COMMITT_MESSAGE: ${{ inputs.message }}
