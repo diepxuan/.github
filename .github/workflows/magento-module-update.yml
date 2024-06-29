@@ -46,6 +46,18 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Check
+        run: |
+          echo $GIT_COMMITTER_EMAIL
+          echo $GIT_COMMITTER_NAME
+          echo $GPG_KEY
+          echo $GPG_KEY_ID
+        env:
+          GIT_COMMITTER_EMAIL: ${{ secrets.GIT_COMMITTER_EMAIL }}
+          GIT_COMMITTER_NAME: ${{ github.repository_owner }}
+          GPG_KEY: ${{ secrets.GPG_KEY }}
+          GPG_KEY_ID: ${{ secrets.GPG_KEY_ID }}
+
       - name: Git configuration
         run: |
           # echo "$GPG_KEY====" | tr -d '\n' | fold -w 4 | sed '$ d' | tr -d '\n' | fold -w 76 | base64 -di | gpg --batch --import || true
