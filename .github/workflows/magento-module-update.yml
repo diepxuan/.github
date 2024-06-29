@@ -16,7 +16,7 @@ on:
         type: string
       message:
         description: 'Commit message'
-        default: ${{ github.event.workflow_run.head_commit.message }}
+        default: ${{ github.event.head_commit.head_commit.message }}
         type: string
     secrets:
       GPG_KEY:
