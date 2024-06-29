@@ -90,7 +90,7 @@ jobs:
         run: |
           pkgName=$(cat composer.json | jq -r '.name')
           mkdir /tmp/${{ matrix.m2module }}
-          ls -la | grep -v total | grep -v "\.$" | awk '{print $NF}' | while read path; do mv $path /tmp/${{ matrix.m2module }}/ -R; done
+          ls -la | grep -v total | grep -v "\.$" | awk '{print $NF}' | while read path; do mv $path /tmp/${{ matrix.m2module }}/; done
           git init
           git remote add origin git@github.com:$pkgName.git
           git fetch -ap
