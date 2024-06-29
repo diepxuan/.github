@@ -14,6 +14,13 @@ on:
         description: 'Release notes'
         default: ${{ github.event.release.body }}
         type: string
+    secrets:
+      GPG_KEY:
+        required: true
+      GPG_KEY_ID:
+        required: true
+      GIT_COMMITTER_EMAIL:
+        required: true
 jobs:
   magento-module-load:
     runs-on: ubuntu-latest
@@ -26,15 +33,8 @@ jobs:
         shell: bash
         run: |
           pkgs=$(ls -l app/code/Diepxuan | grep '^d' | awk '{print $NF}' | while read dir; do echo $dir; done)
-          # pkgs=$(ls -l app/code/Diepxuan | grep '^d' | awk '{print $NF}' | while read dir; do cat app/code/Diepxuan/$dir/composer.json | jq -r '.name'; done)
           json=$(printf '%s\n' "${pkgs}" | jq -R . | jq -s -c .)
-          # echo "::set-output name=m2module::$pkgs"
-          # echo "m2module=$json"
-          # echo "m2module=$(jq -r -c . <<< $json)"
           echo "m2module=$json" >> "$GITHUB_OUTPUT"
-      - name: Check
-        if: false
-        run: jq . <<< '${{ steps.m2module.outputs.m2module }}'
   magento-module-build:
     runs-on: ubuntu-latest
     needs: magento-module-load
@@ -43,34 +43,18 @@ jobs:
         m2module: ${{ fromJSON(needs.magento-module-load.outputs.m2module) }}
     name: Test and Build ${{ matrix.m2module }} module
     steps:
-      - name: Check
-        if: false
-        run: echo ${{ matrix.m2module }}
       - name: Checkout repository
         uses: actions/checkout@v4
-      - name: SSH configuration
-        run: |
-          mkdir -p ~/.ssh
-          echo "$SSH_ID_RSA" > ~/.ssh/id_rsa
-          # openssl pkey < ~/.ssh/id_rsa > ~/.ssh/id_rsa.pkcs8
-          # openssl rsa < $SSH_ID_RSA > ~/.ssh/id_rsa
-          # ssh-add ~/.ssh/id_rsa.pkcs8 || mv -f ~/.ssh/id_rsa.pkcs8 ~/.ssh/id_rsa
-          chmod 700 ~/.ssh
-          chmod 600 ~/.ssh/*
-        env:
-          SSH_ID_RSA: ${{ secrets.SSH_ID_RSA }}
 
       - name: Git configuration
-        # if: false
         run: |
-          # echo "$GPG_KEY====" | tr -d '\n' | fold -w 4 | sed '$ d' | tr -d '\n' | fold -w 76 | base64 -di | gpg --batch --import
           # echo "$GPG_KEY====" | tr -d '\n' | fold -w 4 | sed '$ d' | tr -d '\n' | fold -w 76 | base64 -di | gpg --batch --import || true
-          # echo "$GPG_KEY" | base64 --decode | gpg --batch --passphrase-fd 0 --import -
-          # gpg --list-secret-keys --keyid-format=long
+          echo "$GPG_KEY" | base64 --decode | gpg --batch --passphrase-fd 0 --import -
+          gpg --list-secret-keys --keyid-format=long
           git config user.email "$GIT_COMMITTER_EMAIL"
           git config user.name "$GIT_COMMITTER_NAME"
-          # git config commit.gpgsign true
-          # git config user.signingkey $GPG_KEY_ID
+          git config commit.gpgsign true
+          git config user.signingkey $GPG_KEY_ID
         env:
           GIT_COMMITTER_EMAIL: ${{ secrets.GIT_COMMITTER_EMAIL }}
           GIT_COMMITTER_NAME: ${{ github.repository_owner }}
@@ -88,18 +72,3 @@ jobs:
           git checkout main
           git add .
           git status
-
-      - name: Push to repository
-        if: false
-        run: |
-          if [ "$(git status --porcelain=v1 2>/dev/null | wc -l)" != "0" ]; then
-            # git add src/debian/control
-            git commit -m "Update packages from ${{ matrix.operating-system }} at $(date +'%d-%m-%y')" &&
-              # git push https://${{ github.repository_owner }}:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git main ||
-              git push ||
-              git stash &&
-              git pull --rebase &&
-              git stash apply &&
-              # git push https://${{ github.repository_owner }}:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git main || true
-              git push || true
-          fi
