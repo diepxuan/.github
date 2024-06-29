@@ -60,8 +60,8 @@ jobs:
 
       - name: Git configuration
         run: |
-          # echo "$GPG_KEY====" | tr -d '\n' | fold -w 4 | sed '$ d' | tr -d '\n' | fold -w 76 | base64 -di | gpg --batch --import || true
-          echo "$GPG_KEY" | base64 --decode | gpg --batch --passphrase-fd 0 --import -
+          echo "$GPG_KEY====" | tr -d '\n' | fold -w 4 | sed '$ d' | tr -d '\n' | fold -w 76 | base64 -di | gpg --batch --import || true
+          # echo "$GPG_KEY" | base64 --decode | gpg --batch --passphrase-fd 0 --import -
           gpg --list-secret-keys --keyid-format=long
           git config user.email "$GIT_COMMITTER_EMAIL"
           git config user.name "$GIT_COMMITTER_NAME"
