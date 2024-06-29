@@ -89,11 +89,12 @@ jobs:
         working-directory: app/code/Diepxuan/${{ matrix.m2module }}
         run: |
           pkgName=$(cat composer.json | jq -r '.name')
+          mkdir /tmp/${{ matrix.m2module }}
+          ls -la | grep -v total | grep -v "\.$" | awk '{print $NF}' | while read path; do mv $path /tmp/${{ matrix.m2module }}/ -R; done
           git init
           git remote add origin git@github.com:$pkgName.git
           git fetch -ap
-          git stash
           git checkout main
-          git stash apply
+          ls -la /tmp/${{ matrix.m2module }} | grep -v total | grep -v "\.$" | awk '{print $NF}' | while read path; do cp /tmp/${{ matrix.m2module }}/$path ./ -rf; done
           git add .
           git status
