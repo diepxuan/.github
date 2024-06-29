@@ -92,6 +92,8 @@ jobs:
           git init
           git remote add origin git@github.com:$pkgName.git
           git fetch -ap
+          git stash
           git checkout main
+          git stash apply
           git add .
           git status
