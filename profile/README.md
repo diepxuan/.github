@@ -19,13 +19,14 @@
 - 2017, trở thành đại lí chính hãng chăn ga gối đệm Everon.
 - 2018, mở bán các sản phẩm Liên Á tại Quảng Bình.
 - 2019, đối phó với khủng hoảng hậu covid, công ty cắt giảm biên chế, thu hẹp sản xuất, với đội ngũ thị trường tập trung kinh doanh chủ yếu 3 tỉnh Quảng Bình, Quảng Trị, Thừa Thiên Huế.
-- 2020, mở rộng thêm nhà xưởng 4000M², gia tăng lượng tồn kho, cùng với 5 tuyến xe liên tục đi khắp 3 tỉnh.
-- Đồng thời trong năm 2021, mở thêm showroom chuyên doanh Chăn ga gối đệm Khách sạn.
-- 2022 ...
+- 2020, xây dựng nhà xưởng 4000M², gia tăng lượng tồn kho, cùng với 5 tuyến xe liên tục đi khắp 3 tỉnh.
+- 2021, khai trương showroom chuyên doanh Chăn ga gối đệm Khách sạn.
+- 2024, khai trương showroom chuyên doanh Chăn ga gối đệm Australia thương hiệu DreamLand
 ```
 
 > [!NOTE]
 > - [DiepXuan](https://www.diepxuan.com)
 > - [Everon Quang Binh](https://www.everonqb.com)
+> - [DreamLand Quang Binh](https://www.dreamlandvn.com)
 > - [packagist](https://packagist.org/packages/diepxuan/)
 > - [launchpad](https://launchpad.net/~caothu91/+archive/ubuntu/ppa)
