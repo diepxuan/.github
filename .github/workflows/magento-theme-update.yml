@@ -1,4 +1,4 @@
-name: Magento Module update
+name: Magento Theme package update
 on:
   workflow_call:
     inputs:
