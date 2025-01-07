@@ -2,7 +2,7 @@ name: SSH Setup
 description: Import SSH key and configure Git for signing commits.
 inputs:
   ssh_key_id:
-    description: GPG key ID
+    description: SSH key ID
     required: true
 runs:
   using: "composite"

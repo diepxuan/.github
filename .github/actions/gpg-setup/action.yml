@@ -17,11 +17,13 @@ runs:
   using: "composite"
   steps:
     - name: Import GPG key
+      shell: bash
       run: |
         echo "${{ inputs.gpg_key }}====" | tr -d '\n' | fold -w 4 | sed '$ d' | tr -d '\n' | fold -w 76 | base64 -di | gpg --batch --import || true
         gpg --list-secret-keys --keyid-format=long
 
     - name: Configure Git
+      shell: bash
       run: |
         git config --global user.email "${{ inputs.committer_email }}"
         git config --global user.name "${{ inputs.committer_name }}"
