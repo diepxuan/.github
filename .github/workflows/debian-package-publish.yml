@@ -117,14 +117,15 @@ jobs:
         working-directory: ppa
         env:
           GIT_COMMITTER_MESSAGE: ${{ inputs.message }}
+          repository: ${{ github.repository }}
         run: |
-          git add .
-          if [ "$(git status --porcelain=v1 2>/dev/null | wc -l)" != "0" ]; then
-            git add .
-            git commit -m "$GIT_COMMITTER_MESSAGE" &&
-              git push ||
-              git stash &&
-              git pull --rebase &&
-              git stash apply &&
+          if [ -n "$(git status --porcelain=v1 2>/dev/null)" ]; then
+            git add src/
+            git commit -m "${GIT_COMMITTER_MESSAGE:-'Auto-commit'}"
+            if ! git push; then
+              git stash
+              git pull --rebase
+              git stash pop
               git push || true
+            fi
           fi
