@@ -60,6 +60,6 @@ jobs:
           committer_name: ${{ github.repository_owner }}
 
       - name: SSH configuration
-        uses: diepxuan/.github/.github/actions/gpg-setup@main
+        uses: diepxuan/.github/.github/actions/ssh-setup@main
         with:
           ssh_key_id: ${{ secrets.SSH_ID_RSA }}
