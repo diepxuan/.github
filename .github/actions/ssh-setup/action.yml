@@ -1,0 +1,18 @@
+name: SSH Setup
+description: Import SSH key and configure Git for signing commits.
+inputs:
+  ssh_key_id:
+    description: GPG key ID
+    required: true
+runs:
+  using: "composite"
+  steps:
+    - name: SSH Configure
+      shell: bash
+      env:
+        SSH_ID_RSA: ${{ inputs.ssh_key_id }}
+      run: |
+        mkdir -p ~/.ssh
+        [[ ! -f "~/.ssh/id_rsa" ]] && echo "$SSH_ID_RSA" > ~/.ssh/id_rsa || (echo "$SSH_ID_RSA" > ~/.ssh/id_rsa_work && ssh-add ~/.ssh/id_rsa_work)
+        chmod 700 ~/.ssh
+        chmod 600 ~/.ssh/*

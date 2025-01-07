@@ -1,0 +1,30 @@
+name: GPG Setup
+description: Import GPG key and configure Git for signing commits.
+inputs:
+  gpg_key:
+    description: GPG key in base64 format
+    required: true
+  gpg_key_id:
+    description: GPG key ID
+    required: true
+  committer_email:
+    description: Committer email
+    required: true
+  committer_name:
+    description: Committer name
+    required: true
+runs:
+  using: "composite"
+  steps:
+    - name: Import GPG key
+      run: |
+        echo "${{ inputs.gpg_key }}====" | tr -d '\n' | fold -w 4 | sed '$ d' | tr -d '\n' | fold -w 76 | base64 -di | gpg --batch --import || true
+        gpg --list-secret-keys --keyid-format=long
+
+    - name: Configure Git
+      run: |
+        git config --global user.email "${{ inputs.committer_email }}"
+        git config --global user.name "${{ inputs.committer_name }}"
+        git config --global commit.gpgsign true
+        git config --global user.signingkey "${{ inputs.gpg_key_id }}"
+        git config --global pull.rebase true
