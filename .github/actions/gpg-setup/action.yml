@@ -21,7 +21,19 @@ runs:
       run: |
         echo "${{ inputs.gpg_key }}====" | tr -d '\n' | fold -w 4 | sed '$ d' | tr -d '\n' | fold -w 76 | base64 -di | gpg --batch --import || true
         gpg --list-secret-keys --keyid-format=long
-
+    - name: GPG expire
+      shell: bash
+      run: |
+        gpg --batch --command-fd 0 --edit-key "$GPG_KEY_ID" <<EOF
+        expire
+        2y
+        save
+        EOF
+        gpg --list-secret-keys --keyid-format=long
+        gpg --export "$GPG_KEY_ID" > key.gpg
+      env:
+        GPG_KEY: ${{ inputs.gpg_key }}
+        GPG_KEY_ID: ${{ inputs.gpg_key_id }}
     - name: Configure Git
       shell: bash
       run: |
