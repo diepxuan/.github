@@ -25,8 +25,14 @@ runs:
       shell: bash
       run: |
         gpg --batch --command-fd 0 --edit-key "$GPG_KEY_ID" <<EOF
+        key 1
         expire
-        2y
+        0
+        save
+        EOF
+        gpg --batch --command-fd 0 --edit-key "$GPG_KEY_ID" <<EOF
+        expire
+        0
         save
         EOF
         gpg --list-secret-keys --keyid-format=long
