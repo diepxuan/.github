@@ -96,7 +96,7 @@ jobs:
     # needs: package-load
     runs-on: ubuntu-latest
     strategy:
-      # max-parallel: 1
+      max-parallel: 1
       fail-fast: false
       matrix:
         # packagename: ${{ fromJSON(needs.package-load.outputs.packages) }}
