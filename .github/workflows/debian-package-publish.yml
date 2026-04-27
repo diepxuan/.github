@@ -6,19 +6,19 @@ on:
   workflow_call:
     inputs:
       branch:
-        description: 'Target branch'
+        description: "Target branch"
         default: ${{ github.event.release.target_commitish }}
         type: string
       version:
-        description: 'Released version'
+        description: "Released version"
         default: ${{ github.event.release.tag_name }}
         type: string
       notes:
-        description: 'Release notes'
+        description: "Release notes"
         default: ${{ github.event.release.body }}
         type: string
       message:
-        description: 'Commit message'
+        description: "Commit message"
         default: ${{ github.event.head_commit.message }}
         type: string
     secrets:
@@ -62,6 +62,8 @@ jobs:
           repository: diepxuan/ppa
           path: ppa
           submodules: true
+          ssh-key: ${{ secrets.SSH_ID_RSA }}
+          ssh-known-hosts: github.com
 
       - name: Update submodule to latest
         working-directory: ppa
@@ -72,16 +74,16 @@ jobs:
           # Extract submodule name from repository
           SUBMODULE_NAME=$(basename "$REPOSITORY")
           SUBMODULE_PATH="src/diepxuan/$SUBMODULE_NAME"
-          
+
           # Check if submodule exists
           if [ ! -d "$SUBMODULE_PATH" ]; then
             echo "Submodule $SUBMODULE_PATH not found"
             exit 1
           fi
-          
+
           # Update submodule to latest
           git submodule update --remote "$SUBMODULE_PATH"
-          
+
           # Commit and push if there are changes
           if [ -n "$(git status --porcelain=v1 2>/dev/null)" ]; then
             git add "$SUBMODULE_PATH"
