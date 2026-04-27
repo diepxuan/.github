@@ -151,10 +151,8 @@ jobs:
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v4
-      - name: Checkout repository
-        shell: bash
-        run: |
-          git pull
+        with:
+          submodules: true
 
       - name: Setup GPG
         uses: diepxuan/.github/.github/actions/gpg-setup@main
