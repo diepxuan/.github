@@ -211,10 +211,10 @@ jobs:
           git stash pop
           reprepro clearvanished
           while read -r file; do
-            dpkg-deb -I "src/diepxuan/dists/$file"
-            # reprepro -V --keepunusednewfiles includedeb ${{ matrix.codename }} "src/diepxuan/dists/$file" || true
-            reprepro -V includedeb ${{ matrix.codename }} "src/diepxuan/dists/$file" || true
-          done < <(ls src/diepxuan/dists/ | grep -E '.*(.deb)$')
+            dpkg-deb -I "src/diepxuan/${{ matrix.packagename }}/dists/$file"
+            # reprepro -V --keepunusednewfiles includedeb ${{ matrix.codename }} "src/diepxuan/${{ matrix.packagename }}/dists/$file" || true
+            reprepro -V includedeb ${{ matrix.codename }} "src/diepxuan/${{ matrix.packagename }}/dists/$file" || true
+          done < <(ls src/diepxuan/${{ matrix.packagename }}/dists/ | grep -E '.*(.deb)$')
 
       - name: Push changes to GitHub
         run: |
