@@ -212,9 +212,16 @@ jobs:
           reprepro clearvanished
           while read -r file; do
             dpkg-deb -I "src/diepxuan/${{ matrix.packagename }}/dists/$file"
-            # reprepro -V --keepunusednewfiles includedeb ${{ matrix.codename }} "src/diepxuan/${{ matrix.packagename }}/dists/$file" || true
             reprepro -V includedeb ${{ matrix.codename }} "src/diepxuan/${{ matrix.packagename }}/dists/$file" || true
           done < <(ls src/diepxuan/${{ matrix.packagename }}/dists/ | grep -E '.*(.deb)$')
+
+      - name: Pull Microsoft packages
+        run: |
+          reprepro pull
+
+      - name: Export repository indexes
+        run: |
+          reprepro export
 
       - name: Push changes to GitHub
         run: |
