@@ -218,11 +218,6 @@ jobs:
       - name: Pull Microsoft packages
         run: |
           reprepro update
-          reprepro pull
-
-      - name: Export repository indexes
-        run: |
-          reprepro export
 
       - name: Push changes to GitHub
         run: |
