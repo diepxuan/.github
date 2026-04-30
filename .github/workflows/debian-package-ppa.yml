@@ -95,6 +95,8 @@ jobs:
   package-build:
     # needs: package-load
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     strategy:
       max-parallel: 1
       fail-fast: false
@@ -217,6 +219,8 @@ jobs:
 
       - name: Pull Microsoft packages
         run: |
+          gpg --import keyrings/microsoft.asc
+          gpg --import keyrings/microsoft-2025.asc
           reprepro update
 
       - name: Push changes to GitHub
