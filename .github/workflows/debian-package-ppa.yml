@@ -233,6 +233,7 @@ jobs:
           git add conf/
           git add pool/
           git add dists/
+          git add lists/
           git commit -m "${GIT_COMMITTER_MESSAGE:-'Auto-commit add .deb files to APT repository'}" || true
           if ! git push; then
             git stash
