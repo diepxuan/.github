@@ -222,7 +222,7 @@ jobs:
           gpg --import keyrings/microsoft.asc
           gpg --import keyrings/microsoft-2025.asc
           rm -f lists/*
-          reprepro update
+          reprepro update || true
 
       - name: Push changes to GitHub
         run: |
