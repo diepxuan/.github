@@ -221,8 +221,8 @@ jobs:
         run: |
           gpg --import keyrings/microsoft.asc
           gpg --import keyrings/microsoft-2025.asc
-          rm -f lists/*
-          reprepro update || true
+          # rm -f lists/*
+          reprepro --ignore=forbiddenchar --noskipold update || true
 
       - name: Push changes to GitHub
         run: |
